@@ -1,7 +1,12 @@
 include(AddCatch2)
 
-add_executable(unit_tests test_deque.cpp)
-target_link_libraries(unit_tests PRIVATE deque Catch2::Catch2WithMain)
+add_executable(
+  unit_tests
+  test_deque.cpp
+)
+target_link_libraries(
+  unit_tests PRIVATE deque Catch2::Catch2WithMain
+)
 
 include(CTest)
 include(Catch)
