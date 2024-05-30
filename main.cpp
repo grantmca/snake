@@ -1,5 +1,5 @@
 #include <iostream>
-#include "deque.h"
+#include "deque.cpp"
 #include "raylib.h"
 #include <raylib.h>
 
@@ -11,6 +11,31 @@ int screenWidth = cellSize * cellCount;
 
 int screenHeight = cellSize * cellCount;
 
+class Snake {
+
+public:
+  Deque<Vector2> body;
+
+  Vector2 direction = Vector2{1, 0};
+
+  Snake() {
+    body.pushEnd(Vector2{6, 10});
+    body.pushEnd(Vector2{7, 10});
+    body.pushEnd(Vector2{8, 10});
+  }
+
+
+
+  void Draw() {
+    for (int i = 0; i < body.size(); i++) {
+      Vector2 link = body.at(i);
+      float x = link.x;
+      float y = link.y;
+      DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, BLACK);
+    }
+  }
+};
+
 class Food {
 
 public:
@@ -19,6 +44,7 @@ public:
   Food() {
     position = GenerateRandomValue();
   }
+
   void Draw() {
     DrawRectangle(position.x * cellSize, position.y * cellSize, cellSize, cellSize, BLACK);
   }
@@ -39,15 +65,16 @@ int main() {
 
   Food food = Food();
 
+  Snake snake = Snake();
+
 
   while (WindowShouldClose() == false) {
-
-
     BeginDrawing();
 
 
     ClearBackground(LIGHTGRAY);
     food.Draw();
+    snake.Draw();
 
     EndDrawing();
   }

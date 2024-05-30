@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "deque.h"
+#include "deque.cpp"
 
 TEST_CASE("DequeTest - PushFront", "[Deque]") {
   Deque<int> deq;
