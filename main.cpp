@@ -12,6 +12,18 @@ public:
   Vector2 direction = Vector2{1, 0};
 
   Snake() {
+    std::cout << "Snake Constructor Called" << std::endl;
+    body.pushEnd(Vector2{6, 10});
+    body.pushEnd(Vector2{7, 10});
+    body.pushEnd(Vector2{8, 10});
+  }
+
+  ~Snake() {
+    std::cout << "Snake Destructor Called" << std::endl;
+  }
+
+  void Reset() {
+    for (int i=0; i < body.size(); i++) {body.popEnd();};
     body.pushEnd(Vector2{6, 10});
     body.pushEnd(Vector2{7, 10});
     body.pushEnd(Vector2{8, 10});
@@ -25,9 +37,7 @@ public:
   void Draw(int cellSize) {
     for (int i = 0; i < body.size(); i++) {
       Vector2 link = body.at(i);
-      float x = link.x;
-      float y = link.y;
-      DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, BLACK);
+      DrawRectangle(int(link.x) * cellSize, int(link.y) * cellSize, cellSize, cellSize, BLACK);
     }
   }
 };
@@ -48,13 +58,12 @@ public:
     position = GenerateRandomValue(cellCount);
   }
 
-
-  void Update() {
-
+  void updatePosition() {
+    position = GenerateRandomValue(cellCount);
   }
 
   void Draw(int cellSize) {
-    DrawRectangle(position.x * cellSize, position.y * cellSize, cellSize, cellSize, BLACK);
+    DrawRectangle(position.x * cellSize, position.y * cellSize, cellSize, cellSize, RED);
   }
 
   Vector2 GenerateRandomValue(int cellCount) {
@@ -111,11 +120,39 @@ public:
     }
   }
 
+  void UpdateOnFood() {
+    int size = snake.body.size();
+    if (Vector2Equals(snake.body.at(0), food.position)) {
+      snake.body.pushFront(food.position);
+      food.updatePosition();
+    }
+    return;
+  }
+
+  void Restart() {
+    snake.Reset();
+    food.GenerateRandomValue(cellCount);
+    lastInterval = 0;
+    return;
+  }
+
+  void CheckColision() {
+    // Check if the head is outside of the scope
+    int x_pos = snake.body.at(0).x;
+    int y_pos = snake.body.at(0).y;
+    if (x_pos >= cellCount || x_pos < 0 || y_pos >= cellCount || y_pos < 0) {
+      std::cout << "Time to Restart" << std::endl;
+      Restart();
+    }
+    // Check if the head is touching the body
+  }
+
   void Update() {
     KeyPressUpdate();
-    //Check on colision and update length if needed
-    //Check on colision with self and raise error if needed
+    //Check on colision with self and Restart if needed
     if (DetectFrameUpdate(0.1)) {
+      CheckColision();
+      UpdateOnFood();
       snake.Update();
     }
   }
