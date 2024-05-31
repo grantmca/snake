@@ -93,23 +93,48 @@ public:
     }
     return false;
   }
+
+  void KeyPressUpdate() {
+    std::cout << ":" << GetCharPressed() << ":" << std::endl;
+    if(IsKeyDown(KEY_K)) {
+      std::cout << "J Down" << std::endl;
+      snake.direction = Vector2{0, -1};
+    } else if (IsKeyDown(KEY_J)) {
+      std::cout << "K Up" << std::endl;
+      snake.direction = Vector2{0, 1};
+    } else if (IsKeyDown(KEY_H)) {
+      std::cout << "H Left" << std::endl;
+      snake.direction = Vector2{-1, 0};
+    } else if (IsKeyDown(KEY_L)) {
+      std::cout << "L Right" << std::endl;
+      snake.direction = Vector2{1, 0};
+    }
+  }
+
+  void Update() {
+    KeyPressUpdate();
+    //Check on colision and update length if needed
+    //Check on colision with self and raise error if needed
+    if (DetectFrameUpdate(0.1)) {
+      snake.Update();
+    }
+  }
+
+  void Draw() {
+    BeginDrawing();
+    food.Draw(cellSize);
+    snake.Draw(cellSize);
+    ClearBackground(LIGHTGRAY);
+    EndDrawing();
+  }
   
   void Run () {
     InitWindow(screenWidth, screenHeight, "Snake Game");
     SetTargetFPS(60);
 
     while (WindowShouldClose() == false) {
-      BeginDrawing();
-
-      if (DetectFrameUpdate(0.1)) {
-        snake.Update();
-      }
-
-      ClearBackground(LIGHTGRAY);
-      food.Draw(cellSize);
-      snake.Draw(cellSize);
-
-      EndDrawing();
+      Update();
+      Draw();
     }
     return;
   }
