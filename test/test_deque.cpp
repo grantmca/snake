@@ -49,6 +49,22 @@ TEST_CASE("DequeTest - Popback", "[Deque]") {
   REQUIRE(deq.at(1) == 2);
 }
 
+TEST_CASE("DequeTest - Update", "[Deque]") {
+  Deque<int> deq;
+  deq.pushEnd(1);
+  deq.pushEnd(2);
+  deq.pushEnd(3);
+  deq.pushEnd(4);
+  deq.at(0)--;
+  deq.at(1)--;
+  deq.at(2)--;
+  deq.at(3)--;
+  REQUIRE(deq.at(0) == 0);
+  REQUIRE(deq.at(1) == 1);
+  REQUIRE(deq.at(2) == 2);
+  REQUIRE(deq.at(3) == 3);
+}
+
 TEST_CASE("DequeTest - Snake Test", "[Deque]") {
   Deque<int> deq;
 
