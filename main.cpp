@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include <raylib.h>
 #include <raymath.h>
+#include <stdexcept>
 
 class Snake {
 
@@ -16,6 +17,7 @@ public:
     body.pushEnd(Vector2{6, 10});
     body.pushEnd(Vector2{7, 10});
     body.pushEnd(Vector2{8, 10});
+    if (body.size() != 3) {throw std::invalid_argument("Destory must be three"); }
   }
 
   ~Snake() {
@@ -23,10 +25,14 @@ public:
   }
 
   void Reset() {
-    for (int i=0; i < body.size(); i++) {body.popEnd();};
+    std::cout << "Size Before" << body.size() << std::endl;
+    for (int i=0; i < body.size(); i++) {body.popFront();};
+    std::cout << "Size After" << body.size() << std::endl;
+    if (body.size() != 0) {throw std::invalid_argument("Destory must be zero"); }
     body.pushEnd(Vector2{6, 10});
     body.pushEnd(Vector2{7, 10});
     body.pushEnd(Vector2{8, 10});
+    if (body.size() != 3) {throw std::invalid_argument("Destory must be three"); }
   }
 
   void Update() {
@@ -81,6 +87,7 @@ public:
   int cellCount = 50;
   int screenWidth = cellSize * cellCount;
   int screenHeight = cellSize * cellCount;
+  bool paused = true;
   double lastInterval = 0;
 
   Game() {
@@ -105,7 +112,10 @@ public:
 
   void KeyPressUpdate() {
     std::cout << ":" << GetCharPressed() << ":" << std::endl;
-    if(IsKeyDown(KEY_K)) {
+    if (IsKeyDown(KEY_SPACE)) {
+      std::cout << "Unpause" << std::endl;
+      paused = false;
+    } else if(IsKeyDown(KEY_K)) {
       std::cout << "J Down" << std::endl;
       snake.direction = Vector2{0, -1};
     } else if (IsKeyDown(KEY_J)) {
@@ -130,6 +140,8 @@ public:
   }
 
   void Restart() {
+    std::cout << "Time to Restart" << std::endl;
+    paused = true;
     snake.Reset();
     food.GenerateRandomValue(cellCount);
     lastInterval = 0;
@@ -137,19 +149,20 @@ public:
   }
 
   void CheckColision() {
-    // Check if the head is outside of the scope
     int x_pos = snake.body.at(0).x;
     int y_pos = snake.body.at(0).y;
     if (x_pos >= cellCount || x_pos < 0 || y_pos >= cellCount || y_pos < 0) {
-      std::cout << "Time to Restart" << std::endl;
+      std::cout << "Out of bounds" << std::endl;
       Restart();
     }
-    // Check if the head is touching the body
+    // for (int i = 1; i < snake.body.size(); i++) {
+    //   if (Vector2Equals(snake.body.at(0), snake.body.at(i))) {
+    //     Restart();
+    //   }
+    // }
   }
 
   void Update() {
-    KeyPressUpdate();
-    //Check on colision with self and Restart if needed
     if (DetectFrameUpdate(0.1)) {
       CheckColision();
       UpdateOnFood();
@@ -170,7 +183,10 @@ public:
     SetTargetFPS(60);
 
     while (WindowShouldClose() == false) {
-      Update();
+      KeyPressUpdate();
+      if (!paused) {
+        Update();
+      }
       Draw();
     }
     return;
