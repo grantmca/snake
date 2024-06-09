@@ -63,7 +63,7 @@ public:
     position = GenerateRandomValue(cellCount);
   }
 
-  void updatePosition() {
+  void Update() {
     position = GenerateRandomValue(cellCount);
   }
 
@@ -132,7 +132,7 @@ public:
     int size = snake.body.size();
     if (Vector2Equals(snake.body.at(0), food.position)) {
       snake.body.pushFront(food.position);
-      food.updatePosition();
+      food.Update();
     }
     return;
   }
@@ -141,7 +141,7 @@ public:
     std::cout << "Time to Restart" << std::endl;
     paused = true;
     snake.Reset();
-    food.updatePosition();
+    food.Update();
     return;
   }
 
