@@ -14,9 +14,9 @@ public:
 
   Snake() {
     std::cout << "Snake Constructor Called" << std::endl;
-    body.pushEnd(Vector2{6, 10});
-    body.pushEnd(Vector2{7, 10});
-    body.pushEnd(Vector2{8, 10});
+    body.pushFront(Vector2{6, 10});
+    body.pushFront(Vector2{7, 10});
+    body.pushFront(Vector2{8, 10});
     if (body.size() != 3) {throw std::invalid_argument("Destory must be three"); }
   }
 
@@ -25,13 +25,12 @@ public:
   }
 
   void Reset() {
-    std::cout << "Size Before" << body.size() << std::endl;
-    for (int i=0; i <= body.size(); i++) {body.popFront();};
-    std::cout << "Size After" << body.size() << std::endl;
+    body.reset();
+    direction = Vector2{1, 0};
     if (body.size() != 0) {throw std::invalid_argument("Destory must be zero"); }
-    body.pushEnd(Vector2{6, 10});
-    body.pushEnd(Vector2{7, 10});
-    body.pushEnd(Vector2{8, 10});
+    body.pushFront(Vector2{6, 10});
+    body.pushFront(Vector2{7, 10});
+    body.pushFront(Vector2{8, 10});
     if (body.size() != 3) {throw std::invalid_argument("Destory must be three"); }
   }
 
@@ -111,20 +110,19 @@ public:
   }
 
   void KeyPressUpdate() {
-    std::cout << ":" << GetCharPressed() << ":" << std::endl;
-    if (IsKeyDown(KEY_SPACE)) {
+    if (IsKeyPressed(KEY_SPACE)) {
       std::cout << "Unpause" << std::endl;
       paused = false;
-    } else if(IsKeyDown(KEY_K)) {
+    } else if(IsKeyPressed(KEY_K)) {
       std::cout << "J Down" << std::endl;
       snake.direction = Vector2{0, -1};
-    } else if (IsKeyDown(KEY_J)) {
+    } else if (IsKeyPressed(KEY_J)) {
       std::cout << "K Up" << std::endl;
       snake.direction = Vector2{0, 1};
-    } else if (IsKeyDown(KEY_H)) {
+    } else if (IsKeyPressed(KEY_H)) {
       std::cout << "H Left" << std::endl;
       snake.direction = Vector2{-1, 0};
-    } else if (IsKeyDown(KEY_L)) {
+    } else if (IsKeyPressed(KEY_L)) {
       std::cout << "L Right" << std::endl;
       snake.direction = Vector2{1, 0};
     }
@@ -143,8 +141,7 @@ public:
     std::cout << "Time to Restart" << std::endl;
     paused = true;
     snake.Reset();
-    food.GenerateRandomValue(cellCount);
-    lastInterval = 0;
+    food.updatePosition();
     return;
   }
 
@@ -155,11 +152,12 @@ public:
       std::cout << "Out of bounds" << std::endl;
       Restart();
     }
-    // for (int i = 1; i < snake.body.size(); i++) {
-    //   if (Vector2Equals(snake.body.at(0), snake.body.at(i))) {
-    //     Restart();
-    //   }
-    // }
+    for (int i = 1; i < snake.body.size(); i++) {
+      if (Vector2Equals(snake.body.at(0), snake.body.at(i))) {
+        std::cout << "x: " << snake.body.at(i).x << " y: " << snake.body.at(i).y << std::endl;
+        Restart();
+      }
+    }
   }
 
   void Update() {

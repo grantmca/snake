@@ -10,6 +10,7 @@ public:
   void popFront();
   void popEnd();
   int size();
+  void reset();
   T& at(int index);
 
 private:
@@ -20,7 +21,6 @@ private:
   int back_index;
   int mid_point;
   void resize();
-  void reset();
 };
 
 template <typename T>
@@ -78,6 +78,7 @@ void Deque<T>::pushEnd (const T& value) {
 
 template <typename T>
 void Deque<T>::popFront () {
+  if (occupied_space == 0) return;
   if (occupied_space == 1) {
     reset();
     return;
@@ -89,6 +90,7 @@ void Deque<T>::popFront () {
 
 template <typename T>
 void Deque<T>::popEnd () {
+  if (occupied_space == 0) return;
   if (occupied_space == 1) {
     reset();
     return;
