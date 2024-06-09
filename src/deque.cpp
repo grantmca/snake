@@ -20,8 +20,20 @@ private:
   int back_index;
   int mid_point;
   void resize();
-  bool emptyColision();
+  void reset();
 };
+
+template <typename T>
+void Deque<T>::reset () {
+  delete[] array;
+  const int MIN_SIZE = 4; 
+  total_space = MIN_SIZE;
+  mid_point = MIN_SIZE/2 - 1;
+  occupied_space = 0;
+  front_index = mid_point;
+  back_index = mid_point;
+  array = new T[total_space];
+}
 
 template <typename T>
 Deque<T>::Deque() {
@@ -45,7 +57,7 @@ void Deque<T>::pushFront (const T& value) {
     occupied_space = 1;
     return;
   }
-  if (front_index - 1 < 0)  resize(); 
+  if (front_index - 1 <= 0)  resize(); 
   front_index--;
   array[front_index] = value;
   occupied_space++;
@@ -66,7 +78,10 @@ void Deque<T>::pushEnd (const T& value) {
 
 template <typename T>
 void Deque<T>::popFront () {
-  if (emptyColision()) throw std::out_of_range("Deque is Empty");
+  if (occupied_space == 1) {
+    reset();
+    return;
+  }
   front_index++;
   occupied_space--;
   return;
@@ -74,8 +89,10 @@ void Deque<T>::popFront () {
 
 template <typename T>
 void Deque<T>::popEnd () {
-  if (emptyColision()) throw std::out_of_range("Deque is Empty");
-
+  if (occupied_space == 1) {
+    reset();
+    return;
+  }
   back_index--;
   occupied_space--;
   return;
@@ -105,11 +122,6 @@ void Deque<T>::resize () {
   mid_point = new_mid_point;
   front_index = mid_point - front_size + 1;
   back_index = mid_point + back_size;
-}
-
-template <typename T>
-bool Deque<T>::emptyColision() {
-  return (front_index == back_index);
 }
 
 template <typename T>

@@ -26,7 +26,7 @@ public:
 
   void Reset() {
     std::cout << "Size Before" << body.size() << std::endl;
-    for (int i=0; i < body.size(); i++) {body.popFront();};
+    for (int i=0; i <= body.size(); i++) {body.popFront();};
     std::cout << "Size After" << body.size() << std::endl;
     if (body.size() != 0) {throw std::invalid_argument("Destory must be zero"); }
     body.pushEnd(Vector2{6, 10});
